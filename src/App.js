@@ -40,17 +40,18 @@ const InputBoard = styled.div`
   display: flex;
   flex: 0.5;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
 `;
 
 // 숨겨진 input 창!! 
 // 1. 애니메이션이 적용된 input 창에 마우스 포커스가 되지 않아서 화면 밖에 몰래 input 창을 만들었다.
 // 2. 애니메이션이 적용된 input 창에 텍스트를 입력하면, 화면 밖에 몰래 심어둔 input 창에도 같이 입력이 된다. (사용자의 눈에만 안보일뿐)
 // 3. 이후 버튼을 누를 때마다 숨겨진 input 창에 자동으로 포커스가 맞춰지고, 
-// 사용자가 숫자를 입력하면 숨겨진 input 창에 텍스트가 입력되는 동시에 애니메이션이 적용된 input 창에도 해당 텍스트가 덩달아 같이 입력된다.
+// 사용자가 굳이 마우스로 클릭하지 않아도 그냥 숫자를 입력하면 숨겨진 input 창에 텍스트가 입력되는 동시에 애니메이션이 적용된 input 창에도 해당 텍스트가 덩달아 같이 입력된다.
 const Input = styled.input`
   flex: 0;
   font-size: 0px;
+
   position: relative;
   bottom: 999999999999999px;
 `;
@@ -95,7 +96,14 @@ const App = () => {
   
   const onChangeInputCount = e => {
     setInputCount(e.target.value);
+
+
+    // 5번 수정때 추가
+    onChangeButton(e);
   };
+
+
+
 
 
   // 2. 실행 취소 & 다시 실행 기능
@@ -115,6 +123,9 @@ const App = () => {
   const { present: presentCount } = ButtonPackage;
 
 
+
+
+
   // 3. 추가한 기능: 버튼을 누를 경우 useRef()를 통해 마우스 포커스를 맞춘다.
   // 화요일에 벨로퍼트의 인터넷 강의를 보다가 알게 되어 추가
   // [삭제] input 창에 애니메이션을 넣었는데 문제는 해당 애니메이션도 포커스를 사용해야 되서 둘이 충돌이 발생 -> 결국 이걸 포기
@@ -122,7 +133,7 @@ const App = () => {
   const resetClick = () => {
     resetCount(0);     // 화면에 표시된 카운터 초기화
     setInputCount('');  // 내가 입력한 숫자 초기화
-    focus();   // 자동으로 마우스 포커스 맞추기
+    //focus();   // 자동으로 마우스 포커스 맞추기
   }
 
   // onClick 함수에 여러개의 이벤트를 넣어야 해서 '리액트 onclick 함수 두개'로 구글링해서 수정했다
@@ -132,7 +143,10 @@ const App = () => {
   }
 
 
-  // 4. 애니메이션 추가 (https://reactjsexample.com/react-component-for-interactive-backgrounds/)
+
+
+
+  // 4. 배경 애니메이션 추가 (https://reactjsexample.com/react-component-for-interactive-backgrounds/)
   // 원본은 함수형이 아니라 class형으로 되어 있어서 constructor와 state를 어떻게 함수형으로 바꿔야 할지 구글링을 했다.
 
   // - react function constructor로 구글링: https://stackoverflow.com/questions/44263915/how-to-specify-a-constructor-with-a-functional-component-fat-arrow-syntax
@@ -142,16 +156,15 @@ const App = () => {
   let [how, setHow] = useState(100);
 
 
-
   // 더하기(+) 버튼을 누른 경우
   let plusHandleClick = (e) => {
 
-    // 1. 배경 애니메이션을 변경해준다.
+    // 배경 애니메이션을 변경해준다.
     setMode(e.target.value);
     setHow(e.target.attributes.how.value);
     setBackground(e.target.attributes.background.value);
 
-    // 2. 더한 값을 넣어준 뒤, 마우스 포커스를 맞춰준다.
+    // 더한 값을 넣어준 뒤, 마우스 포커스를 맞춰준다.
     // 더하기(+)를 할 때 자꾸 문자열로 더해지는 문제가 있어서 구글링 후 Number(inputCount)로 변경 */}
     // https://gomakethings.com/converting-strings-to-numbers-with-vanilla-javascript/
     setCount(presentCount + Number(inputCount));  
@@ -162,12 +175,12 @@ const App = () => {
   // 마이너스(-) 버튼을 누른 경우
   let minusHandleClick = (e) => {
 
-    // 1. 배경 애니메이션을 변경해준다.
+    // 배경 애니메이션을 변경해준다.
     setMode(e.target.value);
     setHow(e.target.attributes.how.value);
     setBackground(e.target.attributes.background.value);
 
-    // 2. 뺀 값을 넣어준 뒤, 마우스 포커스를 맞춰준다.
+    // 뺀 값을 넣어준 뒤, 마우스 포커스를 맞춰준다.
     setCount(presentCount - Number(inputCount));  
     focus();
   }
@@ -176,12 +189,12 @@ const App = () => {
   // Redo 버튼을 누른 경우
   let undoHandleClick = (e) => {
 
-    // 1. 배경 애니메이션을 변경해준다.
+    // 배경 애니메이션을 변경해준다.
     setMode(e.target.value);
     setHow(e.target.attributes.how.value);
     setBackground(e.target.attributes.background.value);
 
-    // 2. Undo를 해준 뒤, 마우스 포커스를 맞춰준다.
+    // Undo를 해준 뒤, 마우스 포커스를 맞춰준다.
     undoCount(); 
     focus();
   }
@@ -190,12 +203,12 @@ const App = () => {
   // Redo 버튼을 누른 경우
   let redoHandleClick = (e) => {
 
-    // 1. 배경 애니메이션을 변경해준다.
+    // 배경 애니메이션을 변경해준다.
     setMode(e.target.value);
     setHow(e.target.attributes.how.value);
     setBackground(e.target.attributes.background.value);
 
-    // 2. Redo를 해준 뒤, 마우스 포커스를 맞춰준다.
+    // Redo를 해준 뒤, 마우스 포커스를 맞춰준다.
     redoCount(); 
     focus();
   }
@@ -204,16 +217,18 @@ const App = () => {
   // reset 버튼을 누른 경우
   let resetHandleClick = (e) => {
 
-    // 1. 배경 애니메이션을 변경해준다.
+    // 배경 애니메이션을 변경해준다.
     setMode(e.target.value);
     setHow(e.target.attributes.how.value);
     setBackground(e.target.attributes.background.value);
 
-    // 2. reset을 해준 뒤, 마우스 포커스를 맞춰준다.
+    // reset을 해준 뒤, 마우스 포커스를 맞춰준다.
     resetClick();
     focus();
-  }
 
+    // 5번 수정: "입력됐어요"라는 문구를 "숫자를 입력하세요"라는 문구로 수정
+    setDisabled(true);
+  }
 
   const modes = {
     main: {
@@ -243,6 +258,30 @@ const App = () => {
   }
 
 
+
+
+  
+  
+  // 5. 버튼 애니메이션 추가
+  let [disabled, setDisabled] = useState(true);
+
+  let onChangeButton = (e) => {
+    const length = e.target.value.length;
+    console.log(length);
+    
+    if (length > 0) {
+      setDisabled(false);
+    } else if (!disabled) {
+      setDisabled(true);
+    }
+  }
+
+  const label = disabled ? '숫자를 입력하세요' : '입력됐어요';
+
+
+
+
+
   return (
     <Root>
 
@@ -256,6 +295,7 @@ const App = () => {
       </NumberBoard>
       
       <InputBoard>
+        <button style={Object.assign({}, styles.button, !disabled && styles.buttonEnabled)} disabled={disabled}> {label} </button>
         <InputBox inputCount={inputCount} onChangeInputCount={onChangeInputCount}></InputBox>
       </InputBoard>
       
@@ -265,7 +305,7 @@ const App = () => {
           <button onClick={plusHandleClick}  key="increment" how={50} background={'#2F3939'} value={'plus'}> + </button>
           <button onClick={minusHandleClick} key="decrement" how={50} background={'#2F3939'} value={'minus'}> - </button>
           <button onClick={redoHandleClick} how={50} background={'#2F3939'} value={'redo'} disabled={!canRedo}> Redo </button>
-          <button onClick={resetHandleClick} how={50} background={'#2F3939'} value={'reset'}> reset </button>
+          <button onClick={resetHandleClick} how={50} background={'#2F3939'} value={'reset'}> Reset </button>
         </div>
 
         <Sky
@@ -279,5 +319,21 @@ const App = () => {
     </Root>
   );
 };
+
+const styles = {
+  button: {
+    width: 200,
+    height: 50,
+    border: 'none',
+    borderRadius: 4,
+    fontSize: 20,
+    cursor: 'pointer',
+    transition: '.25s all',
+  },
+  buttonEnabled: {
+    backgroundColor: '#ffc107',
+    width: 220,
+  },
+}
 
 export default App;
