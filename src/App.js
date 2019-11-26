@@ -76,7 +76,7 @@ const App = () => {
 
   // 1. 클래스형이 아닌 함수형에서 input 하기
   // 출처: https://velog.io/@velopert/react-hooks
-  const [inputCount, setInputCount] = useState(0);  // 위 예제에서는 초기값에 ''을 넣었던데, 실행해보니 문자열로 인식하길래 useState number로 구글링해보니 초기값에 0을 넣길래 나도 따라 넣어줌
+  const [inputCount, setInputCount] = useState('');
 
   const onChangeInputCount = e => {
     setInputCount(e.target.value);
@@ -106,7 +106,7 @@ const App = () => {
   const inputFocus = useRef();
   const resetClick = () => {
     resetCount(0);     // 화면에 표시된 카운터 초기화
-    setInputCount(0);  // 내가 입력한 숫자 초기화
+    setInputCount('');  // 내가 입력한 숫자 초기화
     inputFocus.current.focus();   // 자동으로 마우스 포커스 맞추기
   }
 
