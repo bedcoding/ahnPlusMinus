@@ -76,7 +76,7 @@ const App = () => {
 
   // 1. 클래스형이 아닌 함수형에서 input 하기
   // 출처: https://velog.io/@velopert/react-hooks
-  const [inputCount, setInputCount] = useState('');
+  const [inputCount, setInputCount] = useState('');   // 입력창은 공백으로 초기화
 
   const onChangeInputCount = e => {
     setInputCount(e.target.value);
@@ -94,7 +94,7 @@ const App = () => {
       undo: undoCount,
       redo: redoCount,
       canUndo,
-      canRedo,
+      canRedo, 
     },
   ] = useUndo(0);
 
@@ -103,11 +103,18 @@ const App = () => {
 
 
   // 3. 추가한 기능: 리셋을 누를 경우 useRef()를 통해 마우스 포커스를 맞춘다.
+  // 화요일에 벨로퍼트의 인터넷 강의를 보다가 알게 되어 추가
   const inputFocus = useRef();
   const resetClick = () => {
     resetCount(0);     // 화면에 표시된 카운터 초기화
     setInputCount('');  // 내가 입력한 숫자 초기화
     inputFocus.current.focus();   // 자동으로 마우스 포커스 맞추기
+  }
+
+  // onClick 함수에 여러개의 이벤트를 넣어야 해서 '리액트 onclick 함수 두개'로 구글링해서 수정했다
+  // https://code-examples.net/ko/q/18dc8f6
+  const focus = () => {
+    inputFocus.current.focus();
   }
 
 
@@ -124,10 +131,10 @@ const App = () => {
       <ButtonBoard>
         {/* 희안하게도 더하기(+)를 할 때 자꾸 문자열로 더해지는 문제가 있어서 구글링해보니 Number(inputCount) 이렇게 바꾸라길래 그렇게 수정했다 */}
         {/* https://gomakethings.com/converting-strings-to-numbers-with-vanilla-javascript/ */}
-        <CircleButton onClick={undoCount} disabled={!canUndo}> Undo </CircleButton>
+        <CircleButton onClick={ function() { undoCount(); focus(); }} disabled={!canUndo}> Undo </CircleButton>
         <CircleButton key="increment" onClick={() => setCount(presentCount + Number(inputCount))}> + </CircleButton>
         <CircleButton key="decrement" onClick={() => setCount(presentCount - inputCount)}> - </CircleButton>
-        <CircleButton onClick={redoCount} disabled={!canRedo}> Redo </CircleButton>
+        <CircleButton onClick={ function() { redoCount(); focus(); } } disabled={!canRedo}> Redo </CircleButton>
         {/* <CircleButton onClick={() => resetCount(0)}> reset </CircleButton> */}
         <CircleButton onClick={resetClick}> reset </CircleButton>
       </ButtonBoard>
