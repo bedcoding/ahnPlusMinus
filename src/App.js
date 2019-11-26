@@ -1,5 +1,6 @@
 import React from "react";
-import { useState } from 'react';  // https://velog.io/@velopert/react-hooks
+import { useState } from 'react';  // 텍스트 input을 위해 삽입 https://velog.io/@velopert/react-hooks
+import { useRef } from 'react';    // 마우스 자동 포커스 기능을 위해 삽입
 import "reset-css";
 import styled from "styled-components";
 import useUndo from 'use-undo';  // 실행취소&다시실행 : https://reactjsexample.com/undo-redo-functionality-with-react-hooks/
@@ -82,6 +83,7 @@ const App = () => {
   };
 
 
+
   // 2. 실행 취소 & 다시 실행 기능
   // 출처: https://reactjsexample.com/undo-redo-functionality-with-react-hooks/
   const [
@@ -97,7 +99,16 @@ const App = () => {
   ] = useUndo(0);
 
   const { present: presentCount } = ButtonPackage;
-  // --------------- 실행 취소 & 다시 실행 기능 끝 ---------------
+
+
+
+  // 3. 추가한 기능: 리셋을 누를 경우 useRef()를 통해 마우스 포커스를 맞춘다.
+  const inputFocus = useRef();
+  const resetClick = () => {
+    resetCount(0);     // 화면에 표시된 카운터 초기화
+    setInputCount(0);  // 내가 입력한 숫자 초기화
+    inputFocus.current.focus();   // 자동으로 마우스 포커스 맞추기
+  }
 
 
   return (
@@ -107,7 +118,7 @@ const App = () => {
       </NumberBoard>
       
       <InputBoard>
-        <Input type="number" value={inputCount} onChange={onChangeInputCount} />
+        <Input type="number" value={inputCount} onChange={onChangeInputCount} ref={inputFocus} />
       </InputBoard>
 
       <ButtonBoard>
@@ -117,7 +128,8 @@ const App = () => {
         <CircleButton key="increment" onClick={() => setCount(presentCount + Number(inputCount))}> + </CircleButton>
         <CircleButton key="decrement" onClick={() => setCount(presentCount - inputCount)}> - </CircleButton>
         <CircleButton onClick={redoCount} disabled={!canRedo}> Redo </CircleButton>
-        <CircleButton onClick={() => resetCount(0)}> reset </CircleButton>
+        {/* <CircleButton onClick={() => resetCount(0)}> reset </CircleButton> */}
+        <CircleButton onClick={resetClick}> reset </CircleButton>
       </ButtonBoard>
     </Root>
   );
