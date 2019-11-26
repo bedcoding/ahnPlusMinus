@@ -5,9 +5,13 @@ import "reset-css";
 import styled from "styled-components";
 import useUndo from 'use-undo';  // 실행취소&다시실행 : https://reactjsexample.com/undo-redo-functionality-with-react-hooks/
 
+// 애니메이션 추가 ( https://reactjsexample.com/react-component-for-interactive-backgrounds/ )
+import Sky from './components/sky/sky';
+import './App.css';
+
+
 const Root = styled.div`
   height: 100vh;
-  background-color: #dbdbdb;
   display: flex;
   flex-direction: column;
 `;
@@ -49,6 +53,7 @@ const ButtonBoard = styled.div`
   align-items: flex-start;
 `;
 
+/* 
 const CircleButton = styled.button`
   color: white;
   background-color: ${props => (props.disabled ? "darkgray" : "gray")};
@@ -69,7 +74,7 @@ const CircleButton = styled.button`
     margin: 0;
   }
 `;
-
+*/
 
 
 const App = () => {
@@ -83,7 +88,6 @@ const App = () => {
   };
 
 
-
   // 2. 실행 취소 & 다시 실행 기능
   // 출처: https://reactjsexample.com/undo-redo-functionality-with-react-hooks/
   const [
@@ -94,12 +98,11 @@ const App = () => {
       undo: undoCount,
       redo: redoCount,
       canUndo,
-      canRedo, 
+      canRedo,
     },
   ] = useUndo(0);
 
   const { present: presentCount } = ButtonPackage;
-
 
 
   // 3. 추가한 기능: 리셋을 누를 경우 useRef()를 통해 마우스 포커스를 맞춘다.
@@ -118,6 +121,116 @@ const App = () => {
   }
 
 
+  // 4. 애니메이션 추가 (https://reactjsexample.com/react-component-for-interactive-backgrounds/)
+  // 원본은 함수형이 아니라 class형으로 되어 있어서 constructor와 state를 어떻게 함수형으로 바꿔야 할지 구글링을 했다.
+
+  // - react function constructor로 구글링: https://stackoverflow.com/questions/44263915/how-to-specify-a-constructor-with-a-functional-component-fat-arrow-syntax
+  // - 이후 useState 여러번으로 구글링해보니 state 값이 여러개면 useState도 여러번 선언해줘야 한다는 벨로포트 글을 보고 수정해주었다.
+  let [mode, setMode] = useState('main');
+  let [background, setBackground] = useState('FEFDFD');
+  let [how, setHow] = useState(100);
+
+
+
+  // 더하기(+) 버튼을 누른 경우
+  let plusHandleClick = (e) => {
+
+    // 1. 배경 애니메이션을 변경해준다.
+    setMode(e.target.value);
+    setHow(e.target.attributes.how.value);
+    setBackground(e.target.attributes.background.value);
+
+    // 2. 더한 값을 넣어준 뒤, 마우스 포커스를 맞춰준다.
+    // 더하기(+)를 할 때 자꾸 문자열로 더해지는 문제가 있어서 구글링 후 Number(inputCount)로 변경 */}
+    // https://gomakethings.com/converting-strings-to-numbers-with-vanilla-javascript/
+    setCount(presentCount + Number(inputCount));  
+    focus();
+  }
+
+
+  // 마이너스(-) 버튼을 누른 경우
+  let minusHandleClick = (e) => {
+
+    // 1. 배경 애니메이션을 변경해준다.
+    setMode(e.target.value);
+    setHow(e.target.attributes.how.value);
+    setBackground(e.target.attributes.background.value);
+
+    // 2. 뺀 값을 넣어준 뒤, 마우스 포커스를 맞춰준다.
+    setCount(presentCount - Number(inputCount));  
+    focus();
+  }
+
+
+  // Redo 버튼을 누른 경우
+  let undoHandleClick = (e) => {
+
+    // 1. 배경 애니메이션을 변경해준다.
+    setMode(e.target.value);
+    setHow(e.target.attributes.how.value);
+    setBackground(e.target.attributes.background.value);
+
+    // 2. Undo를 해준 뒤, 마우스 포커스를 맞춰준다.
+    undoCount(); 
+    focus();
+  }
+  
+
+  // Redo 버튼을 누른 경우
+  let redoHandleClick = (e) => {
+
+    // 1. 배경 애니메이션을 변경해준다.
+    setMode(e.target.value);
+    setHow(e.target.attributes.how.value);
+    setBackground(e.target.attributes.background.value);
+
+    // 2. Redo를 해준 뒤, 마우스 포커스를 맞춰준다.
+    redoCount(); 
+    focus();
+  }
+
+
+  // reset 버튼을 누른 경우
+  let resetHandleClick = (e) => {
+
+    // 1. 배경 애니메이션을 변경해준다.
+    setMode(e.target.value);
+    setHow(e.target.attributes.how.value);
+    setBackground(e.target.attributes.background.value);
+
+    // 2. reset을 해준 뒤, 마우스 포커스를 맞춰준다.
+    resetClick();
+  }
+
+
+  const modes = {
+    main: {
+      0: 'http://www.joseilbo.com/gisa_img_origin/15540824801554082480_rozzhj_origin.jpg',
+      1: 'http://img.etnews.com/photonews/1601/766864_20160125133935_199_0001.jpg' ,
+    },  
+    plus: {
+      0: 'https://image.flaticon.com/icons/svg/1828/1828817.svg',
+      1: 'https://image.flaticon.com/icons/svg/660/660540.svg',
+    },
+    minus: {
+      0: 'https://image.flaticon.com/icons/svg/992/992514.svg',
+      1: 'https://image.flaticon.com/icons/svg/660/660538.svg'
+    },
+    redo: {
+      0: 'https://image.flaticon.com/icons/svg/889/889578.svg',
+      1: 'https://image.flaticon.com/icons/svg/1276/1276482.svg'
+    },
+    undo: {
+      0: 'https://image.flaticon.com/icons/svg/889/889590.svg',
+      1: 'https://image.flaticon.com/icons/svg/1276/1276491.svg'
+    },
+    reset: {
+      0: 'https://image.flaticon.com/icons/svg/390/390029.svg',
+      1: 'https://image.flaticon.com/icons/svg/953/953898.svg'
+    }
+  }
+
+
   return (
     <Root>
       <NumberBoard>
@@ -129,14 +242,21 @@ const App = () => {
       </InputBoard>
 
       <ButtonBoard>
-        {/* 희안하게도 더하기(+)를 할 때 자꾸 문자열로 더해지는 문제가 있어서 구글링해보니 Number(inputCount) 이렇게 바꾸라길래 그렇게 수정했다 */}
-        {/* https://gomakethings.com/converting-strings-to-numbers-with-vanilla-javascript/ */}
-        <CircleButton onClick={ function() { undoCount(); focus(); }} disabled={!canUndo}> Undo </CircleButton>
-        <CircleButton key="increment" onClick={() => setCount(presentCount + Number(inputCount))}> + </CircleButton>
-        <CircleButton key="decrement" onClick={() => setCount(presentCount - inputCount)}> - </CircleButton>
-        <CircleButton onClick={ function() { redoCount(); focus(); } } disabled={!canRedo}> Redo </CircleButton>
-        {/* <CircleButton onClick={() => resetCount(0)}> reset </CircleButton> */}
-        <CircleButton onClick={resetClick}> reset </CircleButton>
+        <div className="title">
+          <button onClick={undoHandleClick} how={50} background={'#2F3939'} value={'undo'} disabled={!canUndo}> Undo  </button>
+          <button onClick={plusHandleClick}  key="increment" how={50} background={'#2F3939'} value={'plus'}> + </button>
+          <button onClick={minusHandleClick} key="decrement" how={50} background={'#2F3939'} value={'minus'}> - </button>
+          <button onClick={redoHandleClick} how={50} background={'#2F3939'} value={'redo'} disabled={!canRedo}> Redo </button>
+          <button onClick={resetHandleClick} how={50} background={'#2F3939'} value={'reset'}> reset </button>
+        </div>
+
+        <Sky
+          images={modes[mode]}
+          how={how}
+          size="100px"
+          time={30}
+          background={background}
+        />
       </ButtonBoard>
     </Root>
   );
