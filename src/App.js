@@ -9,6 +9,9 @@ import useUndo from 'use-undo';  // 실행취소&다시실행 : https://reactjse
 import Sky from './components/sky/sky';
 import './App.css';
 
+// 두번째 추가
+import InputBox from "./InputBox";
+
 
 const Root = styled.div`
   height: 100vh;
@@ -28,7 +31,7 @@ const NumberSpan = styled.span`
   flex: 1;
   font-size: 100px;
   font-weight: 600;
-  color: olive;
+  color: #00AAF0;
   align-items: center;
   justify-content: center;
 `;
@@ -40,10 +43,16 @@ const InputBoard = styled.div`
   justify-content: space-around;
 `;
 
+// 숨겨진 input 창!! 
+// 1. 애니메이션이 적용된 input 창에 마우스 포커스가 되지 않아서 화면 밖에 몰래 input 창을 만들었다.
+// 2. 애니메이션이 적용된 input 창에 텍스트를 입력하면, 화면 밖에 몰래 심어둔 input 창에도 같이 입력이 된다. (사용자의 눈에만 안보일뿐)
+// 3. 이후 버튼을 누를 때마다 숨겨진 input 창에 자동으로 포커스가 맞춰지고, 
+// 사용자가 숫자를 입력하면 숨겨진 input 창에 텍스트가 입력되는 동시에 애니메이션이 적용된 input 창에도 해당 텍스트가 덩달아 같이 입력된다.
 const Input = styled.input`
-  flex: 0.5;
-  font-size: 30px;
-  text-align: right;
+  flex: 0;
+  font-size: 0px;
+  position: relative;
+  bottom: 999999999999999px;
 `;
 
 const ButtonBoard = styled.div`
@@ -83,6 +92,7 @@ const App = () => {
   // 출처: https://velog.io/@velopert/react-hooks
   const [inputCount, setInputCount] = useState('');   // 입력창은 공백으로 초기화
 
+  
   const onChangeInputCount = e => {
     setInputCount(e.target.value);
   };
@@ -105,13 +115,14 @@ const App = () => {
   const { present: presentCount } = ButtonPackage;
 
 
-  // 3. 추가한 기능: 리셋을 누를 경우 useRef()를 통해 마우스 포커스를 맞춘다.
+  // 3. 추가한 기능: 버튼을 누를 경우 useRef()를 통해 마우스 포커스를 맞춘다.
   // 화요일에 벨로퍼트의 인터넷 강의를 보다가 알게 되어 추가
+  // [삭제] input 창에 애니메이션을 넣었는데 문제는 해당 애니메이션도 포커스를 사용해야 되서 둘이 충돌이 발생 -> 결국 이걸 포기
   const inputFocus = useRef();
   const resetClick = () => {
     resetCount(0);     // 화면에 표시된 카운터 초기화
     setInputCount('');  // 내가 입력한 숫자 초기화
-    inputFocus.current.focus();   // 자동으로 마우스 포커스 맞추기
+    focus();   // 자동으로 마우스 포커스 맞추기
   }
 
   // onClick 함수에 여러개의 이벤트를 넣어야 해서 '리액트 onclick 함수 두개'로 구글링해서 수정했다
@@ -200,6 +211,7 @@ const App = () => {
 
     // 2. reset을 해준 뒤, 마우스 포커스를 맞춰준다.
     resetClick();
+    focus();
   }
 
 
@@ -233,14 +245,20 @@ const App = () => {
 
   return (
     <Root>
+
+      {/* 화면 밖으로 숨긴 유령 input 창: 이곳에 마우스 포커스가 맞춰지면서 사용자가 클릭을 하지 않아도 숫자 입력이 계속 가능하도록 꼼수를 부림 */}
+      <Input type="number" value={inputCount} onChange={onChangeInputCount} ref={inputFocus} />
+      {/* 애니메이션 적용된 ↓ 아래의 진짜 input 창에는 마우스 포커스가 안 맞춰지는 문제가 있어서 이렇게 우회했다; */}
+
+
       <NumberBoard>
         <NumberSpan> {presentCount} </NumberSpan>
       </NumberBoard>
       
       <InputBoard>
-        <Input type="number" value={inputCount} onChange={onChangeInputCount} ref={inputFocus} />
+        <InputBox inputCount={inputCount} onChangeInputCount={onChangeInputCount}></InputBox>
       </InputBoard>
-
+      
       <ButtonBoard>
         <div className="title">
           <button onClick={undoHandleClick} how={50} background={'#2F3939'} value={'undo'} disabled={!canUndo}> Undo  </button>
